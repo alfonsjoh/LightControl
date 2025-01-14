@@ -24,13 +24,6 @@ func (c *Controller) GetAllLights() (Models.AllLights, error) {
 	}
 	defer resp.Body.Close()
 
-	//data, err := io.ReadAll(resp.Body)
-	//if err != nil {
-	//        return nil, err
-	//}
-	//
-	//fmt.Println(string(data))
-
 	var lights Models.AllLights
 	if err := json.NewDecoder(resp.Body).Decode(&lights); err != nil {
 		return nil, err
@@ -45,6 +38,25 @@ func (c *Controller) SetColor(lightID string, color Color) error {
 		return err
 	}
 	requestBody := bytes.NewBufferString(colorString)
+
+	url := fmt.Sprintf("http://%s/api/%s/lights/%s/state", c.config.Address, c.config.ID, lightID)
+	request, err := http.NewRequest("PUT", url, requestBody)
+	if err != nil {
+		return err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	return nil
+}
+
+func (c *Controller) SetOnOff(lightID string, on bool) error {
+	requestBody := bytes.NewBufferString(fmt.Sprintf("{\"on\": %t}", on))
 
 	url := fmt.Sprintf("http://%s/api/%s/lights/%s/state", c.config.Address, c.config.ID, lightID)
 	request, err := http.NewRequest("PUT", url, requestBody)

@@ -61,6 +61,11 @@ func main() {
 		panic(err)
 	}
 
+	err = controller.SetOnOff(targetLightId, true)
+	if err != nil {
+		panic(err)
+	}
+
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
@@ -69,8 +74,7 @@ func main() {
 	go func() {
 		<-sigs
 		// Turn off the light when the program exits
-		black := Hue.NewRGB(0, 0, 0)
-		err := controller.SetColor(targetLightId, &black)
+		err := controller.SetOnOff(targetLightId, false)
 		if err != nil {
 			fmt.Println(err)
 		}
