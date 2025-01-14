@@ -1,0 +1,17 @@
+{
+  "id": "gy3AHR2VBs49n4qgswl1sHq0Dl2LhD00tm87Xe4N",
+  "address": "192.168.10.203",
+  "target_light_name": "Dator",
+  "default_color": "888888",
+  "programs": {
+    "Overwatch": "0000ff",
+    "Rivals": "21a1ff",
+    "Code": "6b07f7"
+  },
+  "timed_programs": {
+    "Code": {
+      "span": "solarOn",
+      "color": "565656"
+    }
+  }
+}
