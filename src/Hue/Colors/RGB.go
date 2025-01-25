@@ -1,58 +1,15 @@
-package Hue
+package Colors
 
 import (
-	"encoding/json"
 	"errors"
 	"math"
 	"strconv"
-	"time"
-
-	"LightControl/Dates"
 )
-
-type Color interface {
-	GetColor() (string, error)
-}
-
-type HueColor struct {
-	Hue        int `json:"hue"`
-	Saturation int `json:"sat"`
-	Brightness int `json:"bri"`
-}
 
 type RGBColor struct {
 	Red   int
 	Green int
 	Blue  int
-}
-
-type TimedRGBColor struct {
-	timings map[Dates.DayTimeSpan]Color
-}
-
-func (c *HueColor) GetColor() (string, error) {
-	bytes, err := json.Marshal(c)
-	if err != nil {
-		return "", err
-	}
-	return string(bytes), nil
-}
-
-func (c *RGBColor) GetColor() (string, error) {
-	hueColor := c.ToHueColor()
-	return hueColor.GetColor()
-}
-
-func (c *TimedRGBColor) GetColor() (string, error) {
-	now := time.Now()
-	dayTime := Dates.NewDayTime(now.Hour(), now.Minute(), now.Second())
-	for span, color := range c.timings {
-		if span.Contains(dayTime) {
-			return color.GetColor()
-		}
-	}
-
-	return "", errors.New("no color found for current time")
 }
 
 func NewRGB(r int, g int, b int) RGBColor {
@@ -75,7 +32,12 @@ func NewRGBFromHex(hex string) (RGBColor, error) {
 	return RGBColor{}, errors.New("invalid hex string length")
 }
 
-func (c *RGBColor) ToHueColor() HueColor {
+func (c *RGBColor) GetColor() (string, error) {
+	hueColor := c.ToHueColor()
+	return hueColor.GetColor()
+}
+
+func (c *RGBColor) ToHueColor() Hue {
 	r, g, b := float64(c.Red)/255.0, float64(c.Green)/255.0, float64(c.Blue)/255.0
 	max, min := math.Max(r, math.Max(g, b)), math.Min(r, math.Min(g, b))
 	delta := max - min
@@ -102,9 +64,10 @@ func (c *RGBColor) ToHueColor() HueColor {
 	}
 	brightness := max * 254
 
-	return HueColor{
+	return Hue{
 		Hue:        int(hue),
 		Saturation: int(saturation),
 		Brightness: int(brightness),
+		On:         true,
 	}
 }

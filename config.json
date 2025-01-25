@@ -1,17 +1,18 @@
 {
-  "id": "gy3AHR2VBs49n4qgswl1sHq0Dl2LhD00tm87Xe4N",
-  "address": "192.168.10.203",
   "target_light_name": "Dator",
-  "default_color": "565656",
-  "programs": {
-    "Overwatch": "0000ff",
-    "Rivals": "21a1ff",
-    "Code": "6b07f7"
-  },
-  "timed_programs": {
-    "Code": {
-      "span": "solarOn",
-      "color": "565656"
-    }
-  }
+  "default_color": "ad9e79",
+  "programs": [
+    { "name": "Deep Rock Galactic", "span": "solarOff", "color": "310a60" },
+    { "name": "battle.net", "color": "0000ff" },
+    { "name": "Rivals", "color": "21a1ff" },
+    { "name": "Code", "color": "6b07f7" },
+    { "name": "Zed", "color": "6b07f7" },
+    { "name": "Goland", "color": "6b07f7" }
+  ],
+  "timed_programs": [
+    { "name": "Netflix", "span": "solarOff", "color": "0000aa" },
+    { "name": "Youtube", "span": "solarOff", "color": "ab0224" },
+    { "name": "Code", "span": "solarOn", "color": "default" },
+    { "name": "Zed", "span": "solarOn", "color": "default" }
+  ]
 }

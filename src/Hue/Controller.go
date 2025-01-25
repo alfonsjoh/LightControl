@@ -6,19 +6,24 @@ import (
 	"fmt"
 	"net/http"
 
-	"LightControl/Hue/Models"
+	"LightControl/src/Extensions"
+	"LightControl/src/Hue/Colors"
+	"LightControl/src/Hue/Models"
 )
 
+var previousLightStates = make(map[string]string)
+
 type Controller struct {
-	config Config
+	configLock *Extensions.StructLock[Config]
 }
 
-func NewController(config Config) *Controller {
-	return &Controller{config}
+func NewController(configLock *Extensions.StructLock[Config]) *Controller {
+	return &Controller{configLock}
 }
 
 func (c *Controller) GetAllLights() (Models.AllLights, error) {
-	resp, err := http.Get(fmt.Sprintf("http://%s/api/%s/lights", c.config.Address, c.config.ID))
+	config := c.configLock.Get()
+	resp, err := http.Get(fmt.Sprintf("http://%s/api/%s/lights", config.Address, config.ID))
 	if err != nil {
 		return nil, err
 	}
@@ -32,14 +37,23 @@ func (c *Controller) GetAllLights() (Models.AllLights, error) {
 	return lights, nil
 }
 
-func (c *Controller) SetColor(lightID string, color Color) error {
+func (c *Controller) SetColor(lightID string, color Colors.Color) error {
+	config := c.configLock.Get()
 	colorString, err := color.GetColor()
+	if prev, ok := previousLightStates[lightID]; ok {
+		if prev == colorString {
+			return nil
+		}
+	}
+	previousLightStates[lightID] = colorString
+
+	fmt.Println("Setting light state:", colorString)
 	if err != nil {
 		return err
 	}
 	requestBody := bytes.NewBufferString(colorString)
 
-	url := fmt.Sprintf("http://%s/api/%s/lights/%s/state", c.config.Address, c.config.ID, lightID)
+	url := fmt.Sprintf("http://%s/api/%s/lights/%s/state", config.Address, config.ID, lightID)
 	request, err := http.NewRequest("PUT", url, requestBody)
 	if err != nil {
 		return err
@@ -56,9 +70,10 @@ func (c *Controller) SetColor(lightID string, color Color) error {
 }
 
 func (c *Controller) SetOnOff(lightID string, on bool) error {
+	config := c.configLock.Get()
 	requestBody := bytes.NewBufferString(fmt.Sprintf("{\"on\": %t}", on))
 
-	url := fmt.Sprintf("http://%s/api/%s/lights/%s/state", c.config.Address, c.config.ID, lightID)
+	url := fmt.Sprintf("http://%s/api/%s/lights/%s/state", config.Address, config.ID, lightID)
 	request, err := http.NewRequest("PUT", url, requestBody)
 	if err != nil {
 		return err

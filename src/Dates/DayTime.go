@@ -47,3 +47,7 @@ func ParseString(s string) (DayTime, bool) {
 
 	return NewDayTime(hour, minute, second), true
 }
+
+func (d *DayTime) ToString() string {
+	return strconv.Itoa(d.Hour) + ":" + strconv.Itoa(d.Minute) + ":" + strconv.Itoa(d.Second)
+}
