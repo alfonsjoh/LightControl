@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type DayTime struct {
@@ -14,6 +15,11 @@ type DayTime struct {
 
 func NewDayTime(hour int, minute int, second int) DayTime {
 	return DayTime{hour, minute, second}
+}
+
+func DayTimeNow() DayTime {
+	now := time.Now()
+	return NewDayTime(now.Hour(), now.Minute(), now.Second())
 }
 
 func (d *DayTime) Diff(other DayTime) int {

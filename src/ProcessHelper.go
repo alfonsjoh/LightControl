@@ -1,17 +1,10 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-	"math"
 	"strings"
 	"syscall"
-	"time"
 	"unsafe"
-
-	"LightControl/src/Config"
-	"LightControl/src/Dates"
-	"LightControl/src/Hue/Colors"
 )
 
 var (
@@ -107,75 +100,75 @@ func GetProcessName(pid uint32) string {
 	return syscall.UTF16ToString(buf)
 }
 
-func FindWindowNames() []string {
+func GetProcessNames() []string {
 	if !initializedProcessesFunc {
 		initializeEnumProcessFunc()
 	}
 	return getWindowTitlesFunc()
 }
 
-func GetProcessColor(config *Config.Config) (Colors.Color, error) {
-	processNames := FindWindowNames()
+//func GetProcessNames(config *Config.Config) (Colors.Color, error) {
+//        processNames := FindWindowNames()
+//
+//        resultPriority := math.MaxInt
+//        var resultColor Colors.Color
+//
+//        now := time.Now()
+//        dayTime := Dates.NewDayTime(now.Hour(), now.Minute(), now.Second())
+//
+//        for _, processName := range processNames {
+//                i := 0
+//                if found, color := getTimedProgramColor(processName, config, dayTime, &i, resultPriority); found {
+//                        resultColor = color
+//                        resultPriority = i
+//                }
+//                if found, color := getProgramColor(processName, config, &i, resultPriority); found {
+//                        resultColor = color
+//                        resultPriority = i
+//                }
+//        }
+//
+//        if resultPriority == math.MaxInt {
+//                return nil, errors.New("no matching process found")
+//        }
+//
+//        return resultColor, nil
+//}
 
-	resultPriority := math.MaxInt
-	var resultColor Colors.Color
-
-	now := time.Now()
-	dayTime := Dates.NewDayTime(now.Hour(), now.Minute(), now.Second())
-
-	for _, processName := range processNames {
-		i := 0
-		if found, color := getTimedProgramColor(processName, config, dayTime, &i, resultPriority); found {
-			resultColor = color
-			resultPriority = i
-		}
-		if found, color := getProgramColor(processName, config, &i, resultPriority); found {
-			resultColor = color
-			resultPriority = i
-		}
-	}
-
-	if resultPriority == math.MaxInt {
-		return nil, errors.New("no matching process found")
-	}
-
-	return resultColor, nil
-}
-
-func getTimedProgramColor(processName string, config *Config.Config, dayTime Dates.DayTime, i *int, maxPriority int) (bool, Colors.Color) {
-	for _, timedProgram := range config.TimedPrograms {
-		if *i >= maxPriority {
-			return false, nil
-		}
-		if strings.Contains(processName, timedProgram.Name) && timedProgram.Span.Contains(dayTime) {
-			// Check if color is valid
-			_, err := timedProgram.Color.GetColor()
-			if err != nil {
-				continue
-			}
-
-			return true, timedProgram.Color
-		}
-		*i++
-	}
-	return false, nil
-}
-
-func getProgramColor(processName string, config *Config.Config, i *int, maxPriority int) (bool, Colors.Color) {
-	for _, program := range config.Programs {
-		if *i >= maxPriority {
-			return false, nil
-		}
-		if strings.Contains(processName, program.Name) {
-			// Check if color is valid
-			_, err := program.Color.GetColor()
-			if err != nil {
-				continue
-			}
-
-			return true, program.Color
-		}
-		*i++
-	}
-	return false, nil
-}
+//func getTimedProgramColor(processName string, config *Config.Config, dayTime Dates.DayTime, i *int, maxPriority int) (bool, Colors.Color) {
+//        for _, timedProgram := range config.TimedPrograms {
+//                if *i >= maxPriority {
+//                        return false, nil
+//                }
+//                if strings.Contains(processName, timedProgram.Name) && timedProgram.Span.Contains(dayTime) {
+//                        // Check if color is valid
+//                        _, err := timedProgram.Color.GetColor()
+//                        if err != nil {
+//                                continue
+//                        }
+//
+//                        return true, timedProgram.Color
+//                }
+//                *i++
+//        }
+//        return false, nil
+//}
+//
+//func getProgramColor(processName string, config *Config.Config, i *int, maxPriority int) (bool, Colors.Color) {
+//        for _, program := range config.Programs {
+//                if *i >= maxPriority {
+//                        return false, nil
+//                }
+//                if strings.Contains(processName, program.Name) {
+//                        // Check if color is valid
+//                        _, err := program.Color.GetColor()
+//                        if err != nil {
+//                                continue
+//                        }
+//
+//                        return true, program.Color
+//                }
+//                *i++
+//        }
+//        return false, nil
+//}

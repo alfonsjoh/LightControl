@@ -9,8 +9,11 @@ import (
 	"time"
 
 	"LightControl/src/Config"
+	"LightControl/src/Dates"
 	"LightControl/src/Extensions"
 	"LightControl/src/Hue"
+	"LightControl/src/Hue/Colors"
+	"LightControl/src/Triggers"
 
 	_ "github.com/shirou/gopsutil/v4/process"
 )
@@ -27,17 +30,44 @@ const AsciiLogo string = " _     _       _     _   _____             _          
 func ActivityWatcher(controller *Hue.Controller, lightId string, configLock *Extensions.StructLock[Config.Config]) {
 	for {
 		config := configLock.Get()
-		color, err := GetProcessColor(&config)
-		if err != nil {
+		processNames := GetProcessNames()
+		triggerState := Triggers.NewTriggerState(processNames, Dates.DayTimeNow())
+
+		var color Colors.Color
+		for _, trigger := range config.Triggers {
+			if c, ok := trigger.GetIfEnabled(triggerState); ok {
+				color = c
+				break
+			}
+		}
+
+		if color == nil {
 			color = config.DefaultColor
 		}
-		err = controller.SetColor(lightId, color)
+
+		err := controller.SetColor(lightId, color)
 		if err != nil {
 			fmt.Println(err)
 		}
 
 		time.Sleep(500 * time.Millisecond)
 	}
+}
+
+func waitForShutDown(controller *Hue.Controller, targetLightId string) {
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL, syscall.SIGQUIT, syscall.SIGABRT, os.Interrupt)
+
+	select {
+	case <-sigs:
+		// Turn off the light when the program exits
+		err := controller.SetOnOff(targetLightId, false)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+	}
+
 }
 
 func main() {
@@ -76,20 +106,4 @@ func main() {
 	go ActivityWatcher(controller, targetLightId, configLock)
 
 	waitForShutDown(controller, targetLightId)
-}
-
-func waitForShutDown(controller *Hue.Controller, targetLightId string) {
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL, syscall.SIGQUIT, syscall.SIGABRT, os.Interrupt)
-
-	select {
-	case <-sigs:
-		// Turn off the light when the program exits
-		err := controller.SetOnOff(targetLightId, false)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-	}
-
 }

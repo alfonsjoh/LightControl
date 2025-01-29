@@ -1,11 +1,11 @@
 package Config
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"time"
 
-	"LightControl/src/Dates"
 	"LightControl/src/Extensions"
 	"LightControl/src/Hue"
 	"LightControl/src/Hue/Colors"
@@ -16,54 +16,12 @@ type Config struct {
 	Address         string
 	TargetLightName string
 	DefaultColor    Colors.Color
-	Programs        []Program
-	TimedPrograms   []TimedProgram
-}
-
-type Program struct {
-	Name  string
-	Color Colors.Color
-}
-
-type TimedProgram struct {
-	Name  string
-	Span  Dates.IDayTimeSpan
-	Color Colors.Color
+	Triggers        []ColorTrigger
+	Hash            []byte // 128-bit hash
 }
 
 func (c *Config) Equals(other *Config) bool {
-	if c.ID != other.ID || c.Address != other.Address || c.TargetLightName != other.TargetLightName {
-		return false
-	}
-
-	if !Colors.ColorEquals(c.DefaultColor, other.DefaultColor) {
-		return false
-	}
-
-	if len(c.Programs) != len(other.Programs) {
-		return false
-	}
-
-	if len(c.TimedPrograms) != len(other.TimedPrograms) {
-		return false
-	}
-
-	for i, program := range c.Programs {
-		if !Colors.ColorEquals(program.Color, other.Programs[i].Color) ||
-			program.Name != other.Programs[i].Name {
-			return false
-		}
-	}
-
-	for i, timedProgram := range c.TimedPrograms {
-		if !Colors.ColorEquals(timedProgram.Color, other.TimedPrograms[i].Color) ||
-			timedProgram.Name != other.TimedPrograms[i].Name ||
-			!Dates.TimeSpanEquals(timedProgram.Span, other.TimedPrograms[i].Span) {
-			return false
-		}
-	}
-
-	return true
+	return bytes.Equal(c.Hash, other.Hash)
 }
 
 func Watcher() (*Extensions.StructLock[Config], error) {

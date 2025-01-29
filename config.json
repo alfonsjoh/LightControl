@@ -1,18 +1,24 @@
 {
   "target_light_name": "Dator",
-  "default_color": "ad9e79",
+  "colors": {
+    "default": "ad9e79",
+    "dev": "6b07f7"
+  },
+  "program_groups": [
+    {
+      "name": "dev",
+      "programs": ["Code", "Zed", "Goland"]
+    }
+  ],
   "programs": [
-    { "name": "Deep Rock Galactic", "span": "solarOff", "color": "310a60" },
+    { "name": "Deep Rock Galactic", "color": "310a60" },
     { "name": "battle.net", "color": "0000ff" },
     { "name": "Rivals", "color": "21a1ff" },
-    { "name": "Code", "color": "6b07f7" },
-    { "name": "Zed", "color": "6b07f7" },
-    { "name": "Goland", "color": "6b07f7" }
+    { "name": "g:Dev", "color": "dev" }
   ],
   "timed_programs": [
     { "name": "Netflix", "span": "solarOff", "color": "0000aa" },
     { "name": "Youtube", "span": "solarOff", "color": "ab0224" },
-    { "name": "Code", "span": "solarOn", "color": "default" },
-    { "name": "Zed", "span": "solarOn", "color": "default" }
+    { "name": "g:dev", "span": "solarOn", "color": "default" }
   ]
 }
