@@ -7,7 +7,7 @@
   "program_groups": [
     {
       "name": "dev",
-      "programs": ["Code", "Zed", "Goland"]
+      "programs": ["Code", "Zed", "Goland", "Rider", "Fleet", "IntelliJ", "RustRover", "Pycharm"]
     }
   ],
   "programs": [
