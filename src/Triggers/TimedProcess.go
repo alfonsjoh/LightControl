@@ -25,7 +25,7 @@ func (program *TimedProcess) IsEnabled(p *TriggerState) bool {
 
 	for _, processName := range p.ProcessNames {
 		for _, name := range program.Names {
-			if strings.Contains(name, processName) {
+			if strings.Contains(processName, name) {
 				return true
 			}
 		}
