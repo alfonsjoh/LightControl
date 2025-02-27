@@ -36,6 +36,10 @@ func ParseStringToSpanSolar(s string) (IDayTimeSpan, bool) {
 func (d *DayTimeSpanSolar) Contains(t DayTime) bool {
 	now := time.Now()
 	rise, set := sunrise.SunriseSunset(Latitude, Longitude, now.Year(), now.Month(), now.Day())
+	// rise and set are in UTC, convert to local time
+	rise = rise.Local()
+	set = set.Local()
+
 	timeSpan := NewDayTimeSpan(
 		NewDayTime(rise.Hour(), rise.Minute(), rise.Second()),
 		NewDayTime(set.Hour(), set.Minute(), set.Second()),
