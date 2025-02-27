@@ -7,18 +7,27 @@
   "program_groups": [
     {
       "name": "dev",
-      "programs": ["Code", "Zed", "Goland", "Rider", "Fleet", "IntelliJ", "RustRover", "Pycharm"]
+      "programs": [
+        "Code",
+        "Zed",
+        "Goland",
+        "Rider",
+        "Fleet",
+        "IntelliJ",
+        "RustRover",
+        "Pycharm",
+        "Clion",
+        "Android Studio"
+      ]
     }
   ],
   "programs": [
     { "name": "Deep Rock Galactic", "color": "310a60" },
-    { "name": "battle.net", "color": "0000ff" },
-    { "name": "Rivals", "color": "21a1ff" },
-    { "name": "g:Dev", "color": "dev" }
+    { "name": "battle.net", "color": "0000ff" }
   ],
   "timed_programs": [
     { "name": "Netflix", "span": "solarOff", "color": "0000aa" },
     { "name": "Youtube", "span": "solarOff", "color": "ab0224" },
-    { "name": "g:dev", "span": "solarOn", "color": "default" }
+    { "name": "g:Dev", "span": "solarOff", "color": "dev" }
   ]
 }
